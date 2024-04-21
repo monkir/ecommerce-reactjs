@@ -1,24 +1,35 @@
 import { useParams } from "react-router-dom";
 import axios from "axios";
 import { useEffect, useState } from "react";
+import { DataView } from "./dataview";
 
 export default function Details() {
   const [productDetails, setProductDetails] = useState(null);
+  const [categoryData, setCategoryData] = useState([]);
   const [thumbnailSrc, setThumbnailSrc] = useState(null);
   // let {id} = useParams();
   let params = useParams();
   console.log(params.id);
 
+  const loadCategoryData = async (category) => {
+    try {
+      const res = await axios.get(
+        "https://dummyjson.com/products/category/" + category
+      );
+      console.log(res.data.products);
+      setCategoryData(res.data.products);
+    } catch (ex) {
+      console.log(ex);
+    }
+  };
+
   async function featchDetails(id) {
     try {
-      var response = await axios.get(
-        "https://dummyjson.com/products/"+id
-      );
-    //   var productData = response.data.products;
-    //   var searchData = productData.filter((p) => p.id == id)[0];
-    var searchData = response.data;
+      var response = await axios.get("https://dummyjson.com/products/" + id);
+      var searchData = response.data;
       console.log(searchData);
       setProductDetails(searchData);
+      loadCategoryData(searchData.category);
     } catch (ex) {
       console.log(ex);
     }
@@ -41,9 +52,14 @@ export default function Details() {
               <div class="lg:col-span-3 w-full lg:sticky top-0 text-center">
                 <div class="px-4 py-10 rounded-xl shadow-[0_2px_10px_-3px_rgba(6,81,237,0.3)] relative">
                   <img
-                    src={thumbnailSrc !== null ? thumbnailSrc : productDetails.thumbnail}
+                    src={
+                      thumbnailSrc !== null
+                        ? thumbnailSrc
+                        : productDetails.thumbnail
+                    }
                     alt="Product"
-                    class="w-4/5 rounded object-cover"
+                    // class="w-4/5 rounded object-cover"
+                    className="object-contain w-4/5 aspect-square"
                   />
                   <button type="button" class="absolute top-4 right-4">
                     <svg
@@ -62,11 +78,14 @@ export default function Details() {
                 </div>
                 <div class="mt-6 flex flex-wrap justify-center gap-6 mx-auto">
                   {productDetails.images.map((img_link) => (
-                    <div onClick={()=>setThumbnailSrc(img_link)} class="rounded-xl p-4 shadow-[0_2px_10px_-3px_rgba(6,81,237,0.3)]">
+                    <div
+                      onClick={() => setThumbnailSrc(img_link)}
+                      class="flex items-center rounded-xl p-4 shadow-[0_2px_10px_-3px_rgba(6,81,237,0.3)]"
+                    >
                       <img
                         src={img_link}
                         alt="Product2"
-                        class="w-24 cursor-pointer"
+                        class="w-24 cursor-pointer content-center"
                       />
                     </div>
                   ))}
@@ -74,12 +93,14 @@ export default function Details() {
               </div>
               <div class="lg:col-span-2">
                 <h2 class="text-2xl font-extrabold text-[#333]">
-                  Acer Aspire Pro 12 | Laptop
+                  {productDetails.title} | {productDetails.category}
                 </h2>
                 <div class="flex flex-wrap gap-4 mt-6">
-                  <p class="text-[#333] text-4xl font-bold">$1200</p>
+                  <p class="text-[#333] text-4xl font-bold">
+                    ${Math.round(productDetails.price*(100-productDetails.discountPercentage)/100)}
+                  </p>
                   <p class="text-gray-400 text-xl">
-                    <strike>$1500</strike>{" "}
+                    <strike>${productDetails.price}</strike>{" "}
                     <span class="text-sm ml-1">Tax included</span>
                   </p>
                 </div>
@@ -142,6 +163,9 @@ export default function Details() {
                 </div>
               </div>
             </div>
+          </div>
+          <div class="mx-auto max-w-2xl px-4 pb-16 sm:px-6 sm:pb-24 lg:max-w-7xl lg:px-8">
+            <DataView data={categoryData} />
           </div>
         </div>
       )}

@@ -28,7 +28,7 @@ export default function SearchBar() {
   }
   return (
     <>
-      <div class="hidden lg:block">
+      {/* <div class="hidden lg:block"> */}
         {/* <ul class="flex space-x-10 "> */}
           {/* <li
             class="hover:underline hover:underline-offset-4 hover:w-fit transition-all duration-100 ease-linear">
@@ -38,7 +38,7 @@ export default function SearchBar() {
             class="hover:underline hover:underline-offset-4 hover:w-fit transition-all duration-100 ease-linear">
             <a href="/checkout">checkout</a>
           </li> */}
-          <form className="w-[500px] relative">
+          <form className="w-full relative">
             <div className="relative">
               <input
                 type="search"
@@ -57,10 +57,10 @@ export default function SearchBar() {
             )}
           </form>
         {/* </ul> */}
-      </div>
+      {/* </div> */}
       {/* <Outlet/> */}
-      <div>
-      </div>
+      {/* <div> */}
+      {/* </div> */}
 
     </>
   );
